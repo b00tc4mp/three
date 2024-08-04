@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three'
+
+        const width = window.innerWidth, height = window.innerHeight
+
+        // init
+
+        const camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 100)
+
+        camera.position.y = 2
+        camera.position.z = 10
+
+        const scene = new THREE.Scene()
+
+        const floor0 = {}
+        const floor1 = {}
+        const floor2 = {}
+        const wall1 = {}
+        const wall2 = {}
+        const wall3 = {}
+        const wall4 = {}
+        const wall5 = {}
+
+        const parts = [
+            floor0,
+            floor1,
+            floor2,
+            wall1,
+            wall2,
+            wall3,
+            wall4,
+            wall5
+        ]
+
+        floor0.geometry = new THREE.BoxGeometry(9, 0.2, 4)
+
+        floor1.geometry = new THREE.BoxGeometry(9, 0.2, 4)
+        floor1.geometry.translate(0, 2.5, 0)
+
+        floor2.geometry = new THREE.BoxGeometry(9, 0.2, 4)
+        floor2.geometry.translate(0, 5, 0)
+
+        wall1.geometry = new THREE.BoxGeometry(0.2, 5, 4)
+        wall1.geometry.translate(-4.4, 2.5, 0)
+
+        wall2.geometry = new THREE.BoxGeometry(0.2, 5, 4)
+        wall2.geometry.translate(4.4, 2.5, 0)
+
+        wall3.geometry = new THREE.BoxGeometry(9, 5, 0.2)
+        wall3.geometry.translate(0, 2.5, -1.9)
+
+        wall4.geometry = new THREE.BoxGeometry(3, 5, 0.2)
+        wall4.geometry.translate(0, 2.5, 1.9)
+
+        wall5.geometry = new THREE.BoxGeometry(1, 5, 0.2)
+        wall5.geometry.translate(3, 2.5, 1.9)
+
+        for (let i = 0; i < 12; i++) {
+            const step = {}
+
+            step.geometry = new THREE.BoxGeometry(0.7, 0.2, 0.2)
+            step.geometry.translate(4, 2.5 - 0.2 * (i + 0.75), -1 + 0.2 * i)
+
+            parts.push(step)
+        }
+
+        const material = new THREE.MeshNormalMaterial()
+
+        parts.forEach(part => {
+            part.mesh = new THREE.Mesh(part.geometry, material)
+            scene.add(part.mesh)
+        })
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true })
+        renderer.setSize(width, height)
+
+        document.body.appendChild(renderer.domElement)
+
+        // animation
+
+        renderer.setAnimationLoop(animate)
+
+        let angle = 0
+        const step = 0.001
+        let direction = 1
+
+        function animate(time) {
+            if (angle > Math.PI / 2.5) direction = -1
+            if (angle < -Math.PI / 2.5) direction = 1
+
+            parts.forEach(part => {
+                part.mesh.rotation.y = angle = angle + step * direction
+            })
+
+            renderer.render(scene, camera)
+        }
+    </script>
+</body>
+
+</html>
